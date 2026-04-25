@@ -581,7 +581,7 @@ body {
 
 .stats-header, .stats-row {
   display: grid;
-  grid-template-columns: 1fr repeat(5, 45px);
+  grid-template-columns: minmax(60px, 1fr) repeat(5, 40px);
   gap: 0.25rem;
   padding: 0.5rem 0.75rem;
   align-items: center;
@@ -616,6 +616,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .col-stat {
@@ -625,12 +626,12 @@ body {
 
 .out-badge {
   display: inline-block;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   background: #ff4757;
   color: white;
-  padding: 0.1rem 0.3rem;
-  border-radius: 4px;
-  margin-left: 0.5rem;
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  margin-left: 0.25rem;
   vertical-align: middle;
 }
 
@@ -646,7 +647,7 @@ body {
 
 /* Bowling table with 4 stat columns */
 .bowling-header, .bowling-row {
-  grid-template-columns: 1fr repeat(4, 50px);
+  grid-template-columns: minmax(60px, 1fr) repeat(4, 40px);
 }
 
 /* Innings Complete */
@@ -831,16 +832,235 @@ body {
 
 /* Responsive */
 @media (max-width: 600px) {
+  .app {
+    padding: 0.5rem;
+  }
+
+  .setup-container {
+    padding: 1rem;
+  }
+
+  .setup-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
   .teams-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .team-box {
+    padding: 1rem;
+  }
+
+  .team-name-input {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  .players-list li {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
   }
   
   .run-buttons {
     grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  .run-btn {
+    padding: 0.8rem;
+    font-size: 1.2rem;
+  }
+
+  .extra-buttons {
+    gap: 0.5rem;
+  }
+
+  .extra-buttons button {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
   }
   
   .main-score {
     font-size: 3rem;
+  }
+
+  .score-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .overs {
+    font-size: 0.9rem;
+  }
+
+  /* Stats Table Mobile */
+  .stats-header, .stats-row {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .stats-header {
+    font-size: 0.65rem;
+  }
+  
+  .stats-header .col-name,
+  .stats-row .col-name {
+    flex: 1;
+    font-size: 0.85rem;
+    min-width: 0;
+  }
+  
+  .stats-header .col-stat,
+  .stats-row .col-stat {
+    width: 30px;
+    text-align: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  /* Hide 4s, 6s, SR columns on mobile (keep R, B) */
+  .stats-header span:nth-child(4),
+  .stats-header span:nth-child(5),
+  .stats-header span:nth-child(6),
+  .stats-row span:nth-child(4),
+  .stats-row span:nth-child(5),
+  .stats-row span:nth-child(6) {
+    display: none;
+  }
+
+  .bowling-header, .bowling-row {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  /* Hide economy on mobile bowling table */
+  .bowling-header span:nth-child(5),
+  .bowling-row span:nth-child(5) {
+    display: none;
+  }
+  
+  .out-badge {
+    font-size: 0.5rem;
+    padding: 0.05rem 0.15rem;
+    margin-left: 0.15rem;
+  }
+
+  /* Current Players Mobile */
+  .current-players {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .player-row .name {
+    font-size: 1rem;
+  }
+
+  .player-row .label {
+    font-size: 0.75rem;
+  }
+
+  /* This Over Mobile */
+  .this-over {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .ball {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  /* Tabs Mobile */
+  .tabs {
+    margin-bottom: 0.75rem;
+  }
+
+  .tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Innings Complete Mobile */
+  .innings-complete {
+    padding: 1.5rem 1rem;
+  }
+
+  .innings-complete h2 {
+    font-size: 1.3rem;
+  }
+
+  .man-of-match {
+    padding: 0.75rem;
+  }
+
+  .mom-name {
+    font-size: 1.2rem;
+  }
+
+  /* Match Scores Header Mobile */
+  .match-scores-header {
+    gap: 0.5rem;
+  }
+
+  .team-score-box {
+    padding: 0.75rem;
+  }
+
+  .team-score-box .team-name {
+    font-size: 0.8rem;
+  }
+
+  .team-score-box .team-score {
+    font-size: 1.4rem;
+  }
+
+  /* Innings Stats Mobile */
+  .innings-stats {
+    padding: 0.75rem;
+  }
+
+  .innings-title {
+    font-size: 0.9rem;
+  }
+
+  /* Undo Button Mobile */
+  .undo-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  /* Top Bar Mobile */
+  .top-bar {
+    padding: 0.5rem;
+  }
+
+  .reset-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  /* Select Players Mobile */
+  .select-players {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .select-players h2 {
+    font-size: 1.3rem;
+  }
+
+  .selection-group h3 {
+    font-size: 1rem;
+  }
+
+  .start-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
   }
 }
 

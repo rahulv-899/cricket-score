@@ -26,7 +26,7 @@ function TeamSetup() {
 
   return (
     <div className="setup-container">
-      <h1>🏏 Cricket Scorer</h1>
+      <h1>🏏 Cricket ScoreCard</h1>
       
       <div className="teams-grid">
         {/* Team 1 */}
