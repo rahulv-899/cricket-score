@@ -1681,6 +1681,42 @@ body {
   border-color: #4caf50;
 }
 
+.player-name-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.player-name-item.disabled:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.player-name-item.in-team1 {
+  background: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.player-name-item.in-team2 {
+  background: rgba(255, 152, 0, 0.15);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.team-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.in-team1 .team-badge {
+  background: #2196f3;
+}
+
+.in-team2 .team-badge {
+  background: #ff9800;
+}
+
 .player-number {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.5);

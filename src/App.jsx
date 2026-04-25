@@ -10,7 +10,7 @@ const DEFAULT_PLAYERS = [
 ];
 
 // Player Names Modal Component
-function PlayerNamesModal({ isOpen, onClose, onAddPlayers }) {
+function PlayerNamesModal({ isOpen, onClose, onAddPlayers, team1Players = [], team2Players = [] }) {
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [customPlayers, setCustomPlayers] = useState([]);
   const [newPlayerName, setNewPlayerName] = useState('');
@@ -18,7 +18,17 @@ function PlayerNamesModal({ isOpen, onClose, onAddPlayers }) {
 
   const allPlayers = [...DEFAULT_PLAYERS, ...customPlayers];
 
+  // Check which team a player belongs to
+  const getPlayerTeam = (name) => {
+    if (team1Players.some(p => p.name.toLowerCase() === name.toLowerCase())) return 1;
+    if (team2Players.some(p => p.name.toLowerCase() === name.toLowerCase())) return 2;
+    return null;
+  };
+
   const togglePlayer = (name) => {
+    // Don't allow selecting if already in a team
+    if (getPlayerTeam(name)) return;
+    
     setSelectedPlayers(prev => 
       prev.includes(name) 
         ? prev.filter(p => p !== name)
@@ -58,17 +68,22 @@ function PlayerNamesModal({ isOpen, onClose, onAddPlayers }) {
         </div>
         
         <div className="player-names-list">
-          {allPlayers.map((name, idx) => (
-            <div 
-              key={name}
-              className={`player-name-item ${selectedPlayers.includes(name) ? 'selected' : ''}`}
-              onClick={() => togglePlayer(name)}
-            >
-              <span className="player-number">{idx + 1}.</span>
-              <span className="player-name">{name}</span>
-              {selectedPlayers.includes(name) && <span className="check-mark">✓</span>}
-            </div>
-          ))}
+          {allPlayers.map((name, idx) => {
+            const playerTeam = getPlayerTeam(name);
+            const isDisabled = playerTeam !== null;
+            return (
+              <div 
+                key={name}
+                className={`player-name-item ${selectedPlayers.includes(name) ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${playerTeam === 1 ? 'in-team1' : ''} ${playerTeam === 2 ? 'in-team2' : ''}`}
+                onClick={() => togglePlayer(name)}
+              >
+                <span className="player-number">{idx + 1}.</span>
+                <span className="player-name">{name}</span>
+                {selectedPlayers.includes(name) && <span className="check-mark">✓</span>}
+                {playerTeam && <span className="team-badge">T{playerTeam}</span>}
+              </div>
+            );
+          })}
         </div>
 
         <div className="add-new-player">
@@ -273,6 +288,8 @@ function TeamSetup() {
         isOpen={showPlayerNames}
         onClose={() => setShowPlayerNames(false)}
         onAddPlayers={handleAddPlayersFromModal}
+        team1Players={state.team1.players}
+        team2Players={state.team2.players}
       />
     </div>
   );
