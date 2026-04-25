@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import './App.css';
 
@@ -356,6 +356,17 @@ function LiveScoring() {
     setShowBowlerModal(false);
   };
 
+  // Auto-dismiss over complete popup if only 1 bowler
+  useEffect(() => {
+    if (state.showOverComplete && bowlingTeam.players.length === 1) {
+      // Auto-continue with same bowler after brief delay
+      const timer = setTimeout(() => {
+        dispatch({ type: 'CHANGE_BOWLER', payload: state.currentBowler });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [state.showOverComplete, bowlingTeam.players.length]);
+
   const getBallDisplay = (ball) => {
     if (ball.isWicket) return 'W';
     if (ball.isWide) return `${ball.runs}wd`;
@@ -365,30 +376,19 @@ function LiveScoring() {
 
   return (
     <div className="scoring-container">
-      {/* Over Complete Popup */}
-      {state.showOverComplete && (
+      {/* Over Complete Popup - only show if multiple bowlers */}
+      {state.showOverComplete && bowlingTeam.players.length > 1 && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>🎉 Over Complete!</h2>
-            {bowlingTeam.players.length === 1 ? (
-              <>
-                <p>{state.currentBowler?.name} continues bowling</p>
-                <button onClick={() => handleBowlerChange(state.currentBowler)}>
-                  Continue
+            <p>Select next bowler</p>
+            <div className="bowler-list">
+              {bowlingTeam.players.filter(p => p.id !== state.currentBowler?.id).map(p => (
+                <button key={p.id} onClick={() => handleBowlerChange(p)}>
+                  {p.name}
                 </button>
-              </>
-            ) : (
-              <>
-                <p>Select next bowler</p>
-                <div className="bowler-list">
-                  {bowlingTeam.players.filter(p => p.id !== state.currentBowler?.id).map(p => (
-                    <button key={p.id} onClick={() => handleBowlerChange(p)}>
-                      {p.name}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+              ))}
+            </div>
           </div>
         </div>
       )}
