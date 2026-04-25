@@ -1075,10 +1075,38 @@ function App() {
 }
 
 function MainApp() {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
+
+  // Determine if match is actively in progress (not complete)
+  const isMatchInProgress = state.step === 'scoring' && 
+    !(state.innings === 2 && (
+      state.balls >= state.overs * 6 || 
+      state.wickets >= state.battingPlayers.length ||
+      state.score > state.firstInningsScore
+    ));
+
+  const handleRefresh = () => {
+    if (!isMatchInProgress) {
+      if (window.confirm('Are you sure you want to start over?')) {
+        dispatch({ type: 'RESET' });
+      }
+    }
+  };
 
   return (
     <div className="app">
+      {/* Global Refresh Button */}
+      <div className="global-header">
+        <button 
+          className={`refresh-btn ${isMatchInProgress ? 'disabled' : ''}`}
+          onClick={handleRefresh}
+          disabled={isMatchInProgress}
+          title={isMatchInProgress ? 'Cannot refresh during match' : 'Start over'}
+        >
+          🔄 Refresh
+        </button>
+      </div>
+
       {state.step === 'setup' && <TeamSetup />}
       {state.step === 'selectPlayers' && <SelectPlayers />}
       {state.step === 'scoring' && <LiveScoring />}

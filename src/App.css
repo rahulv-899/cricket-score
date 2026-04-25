@@ -18,6 +18,36 @@ body {
   margin: 0 auto;
 }
 
+/* Global Header with Refresh Button */
+.global-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.refresh-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover:not(.disabled) {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.refresh-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Setup Container */
 .setup-container {
   max-width: 800px;
@@ -1176,6 +1206,15 @@ body {
   .app {
     padding: 0.35rem;
     max-width: 100%;
+  }
+
+  .global-header {
+    margin-bottom: 0.35rem;
+  }
+
+  .refresh-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
   }
 
   .setup-container {
