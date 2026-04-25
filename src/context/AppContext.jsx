@@ -174,6 +174,12 @@ const appReducer = (state, action) => {
         finalNonStriker = newStriker;
       }
       
+      // Only show over complete popup if there are more overs to bowl
+      const totalBallsInMatch = state.overs * 6;
+      const allWicketsDown = (isWicket ? state.wickets + 1 : state.wickets) >= state.battingPlayers.length;
+      const inningsComplete = newBalls >= totalBallsInMatch || allWicketsDown;
+      const shouldShowOverComplete = overComplete && !inningsComplete;
+      
       return {
         ...state,
         score: state.score + totalRuns,
@@ -183,7 +189,7 @@ const appReducer = (state, action) => {
         nonStriker: finalNonStriker,
         ballByBall: [...state.ballByBall, ballRecord],
         currentOver: newCurrentOver,
-        showOverComplete: overComplete,
+        showOverComplete: shouldShowOverComplete,
         outBatsmen: newOutBatsmen,
       };
     }

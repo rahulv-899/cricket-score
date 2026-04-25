@@ -5,15 +5,17 @@
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
   min-height: 100vh;
   color: #fff;
 }
 
 .app {
   min-height: 100vh;
-  padding: 1rem;
+  padding: 0.75rem;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 /* Setup Container */
@@ -307,22 +309,25 @@ body {
 
 .score-header {
   text-align: center;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #1a5f2a 0%, #2d8a3e 100%);
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #1a5f2a 0%, #2d8a3e 50%, #238636 100%);
   border-radius: 16px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 20px rgba(45, 138, 62, 0.3);
 }
 
 .score-header h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
+  margin: 0 0 0.4rem 0;
+  font-size: 1.1rem;
   opacity: 0.9;
+  font-weight: 500;
 }
 
 .main-score {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 800;
   line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .main-score .separator {
@@ -342,10 +347,11 @@ body {
 
 /* Current Players */
 .current-players {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
   border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 0.85rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .batsmen {
@@ -394,127 +400,176 @@ body {
 
 /* This Over */
 .this-over {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
   border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 0.85rem;
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .over-label {
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   white-space: nowrap;
+  font-size: 0.85rem;
 }
 
 .balls {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
 }
 
 .ball {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
   border-radius: 50%;
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.ball:last-child {
+  animation: ballPop 0.3s ease-out;
+}
+
+@keyframes ballPop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .ball.wicket {
-  background: #ff4757;
+  background: linear-gradient(145deg, #ff4757, #e63946);
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.5);
 }
 
 .ball.four {
-  background: #2196f3;
+  background: linear-gradient(145deg, #2196f3, #1976d2);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.5);
 }
 
 .ball.six {
-  background: #9c27b0;
+  background: linear-gradient(145deg, #9c27b0, #7b1fa2);
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.5);
 }
 
 /* Run Buttons */
 .run-buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .run-btn {
-  padding: 1.25rem;
-  font-size: 1.75rem;
+  padding: 1rem;
+  font-size: 1.5rem;
   font-weight: 700;
   border: none;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
   color: white;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .run-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .run-btn:active {
   transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .run-btn.four {
-  background: #2196f3;
+  background: linear-gradient(145deg, #2196f3, #1976d2);
+  box-shadow: 0 2px 12px rgba(33, 150, 243, 0.4);
+}
+
+.run-btn.four:hover {
+  box-shadow: 0 4px 20px rgba(33, 150, 243, 0.6);
 }
 
 .run-btn.six {
-  background: #9c27b0;
+  background: linear-gradient(145deg, #9c27b0, #7b1fa2);
+  box-shadow: 0 2px 12px rgba(156, 39, 176, 0.4);
+}
+
+.run-btn.six:hover {
+  box-shadow: 0 4px 20px rgba(156, 39, 176, 0.6);
 }
 
 /* Extra Buttons */
 .extra-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .extra-buttons button {
-  padding: 0.75rem;
-  font-size: 0.9rem;
+  padding: 0.65rem;
+  font-size: 0.85rem;
   font-weight: 600;
   border: none;
   border-radius: 10px;
-  background: #ff9800;
+  background: linear-gradient(145deg, #ff9800, #f57c00);
   color: white;
   cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.extra-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+}
+
+.extra-buttons button:active {
+  transform: scale(0.95);
 }
 
 .extra-buttons .wicket-btn {
-  background: #ff4757;
+  background: linear-gradient(145deg, #ff4757, #e63946);
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+}
+
+.extra-buttons .wicket-btn:hover {
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.5);
 }
 
 /* Undo Button */
 .undo-btn {
   width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.15s ease;
 }
 
 .undo-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .undo-btn:disabled {
@@ -525,42 +580,47 @@ body {
 /* Tabs */
 .tabs {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.25rem;
+  border-radius: 12px;
 }
 
 .tab {
   flex: 1;
-  padding: 0.75rem;
-  font-size: 1rem;
+  padding: 0.6rem;
+  font-size: 0.9rem;
   font-weight: 600;
   border: none;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .tab.active {
-  background: #4caf50;
+  background: linear-gradient(145deg, #4caf50, #43a047);
   color: white;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
 }
 
 /* Stats View */
 .stats-view {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
   border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 0.85rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .stats-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .stats-section:last-child {
@@ -568,15 +628,16 @@ body {
 }
 
 .stats-section h3 {
-  margin: 0 0 0.75rem 0;
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 0.6rem 0;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .stats-table {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .stats-header, .stats-row {
@@ -653,42 +714,52 @@ body {
 /* Innings Complete */
 .innings-complete {
   text-align: center;
-  padding: 2rem;
-  background: rgba(76, 175, 80, 0.2);
+  padding: 1.5rem;
+  background: linear-gradient(145deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
   border-radius: 16px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .innings-complete h2 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
 }
 
 .innings-complete p {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
 }
 
 .innings-complete .winner {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #ffd700;
-  margin: 1rem 0;
+  margin: 0.75rem 0;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
 }
 
 .start-innings-btn {
-  margin-top: 1.5rem;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  background: linear-gradient(135deg, #4caf50, #45a049);
+  margin-top: 1.25rem;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  background: linear-gradient(145deg, #4caf50, #43a047);
   color: white;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   font-weight: bold;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  transition: all 0.2s ease;
 }
 
 .start-innings-btn:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+}
+
+.start-innings-btn:active {
+  transform: scale(0.98);
 }
 
 /* Target Info */
@@ -701,28 +772,36 @@ body {
 
 /* Man of the Match */
 .man-of-match {
-  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  background: linear-gradient(145deg, #ffd700, #ffb800);
   color: #1a1a2e;
-  padding: 1rem;
+  padding: 0.85rem;
   border-radius: 12px;
-  margin: 1rem 0;
+  margin: 0.75rem 0;
   text-align: center;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.35);
+  animation: momGlow 2s ease-in-out infinite;
+}
+
+@keyframes momGlow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(255, 215, 0, 0.35); }
+  50% { box-shadow: 0 4px 30px rgba(255, 215, 0, 0.55); }
 }
 
 .man-of-match h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+  margin: 0 0 0.35rem 0;
+  font-size: 0.9rem;
 }
 
 .mom-name {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
-  margin: 0.25rem 0;
+  margin: 0.2rem 0;
 }
 
 .mom-stats {
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin: 0;
+  opacity: 0.85;
 }
 
 /* Match Summary */
@@ -777,25 +856,41 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
-  background: #1a1a2e;
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 400px;
+  background: linear-gradient(145deg, #252538, #1a1a2e);
+  border-radius: 20px;
+  padding: 1.75rem;
+  max-width: 380px;
   width: 100%;
   text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal h2 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.4rem;
 }
 
 .modal p {
@@ -830,28 +925,275 @@ body {
   cursor: pointer;
 }
 
+/* ============================================
+   EVENT ANIMATIONS
+   ============================================ */
+
+/* Base overlay for all animations */
+.event-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.event-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-icon {
+  font-size: 5rem;
+  animation: iconBounce 0.6s ease-out;
+}
+
+.event-text {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* FOUR Animation */
+.four-animation {
+  background: radial-gradient(circle, rgba(33, 150, 243, 0.3) 0%, transparent 70%);
+  animation: fadeInOut 1.2s ease-out forwards;
+}
+
+.four-animation .event-text {
+  color: #2196f3;
+  animation: slideUp 0.4s ease-out, pulse 0.3s ease-in-out 0.4s;
+}
+
+.four-animation .event-icon {
+  animation: iconBounce 0.5s ease-out, shake 0.3s ease-in-out 0.5s;
+}
+
+/* SIX Animation */
+.six-animation {
+  background: radial-gradient(circle, rgba(156, 39, 176, 0.4) 0%, rgba(103, 58, 183, 0.2) 50%, transparent 70%);
+  animation: fadeInOut 1.5s ease-out forwards;
+}
+
+.six-animation .event-text {
+  color: #e040fb;
+  animation: slideUp 0.4s ease-out, glow 0.5s ease-in-out 0.4s infinite;
+  text-shadow: 0 0 30px #e040fb, 0 0 60px #9c27b0;
+}
+
+.six-animation .event-icon {
+  animation: iconBounce 0.6s ease-out, float 1s ease-in-out 0.6s;
+}
+
+.six-animation .fireworks {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, #ff6b6b 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, #ffd93d 2px, transparent 2px),
+    radial-gradient(circle at 60% 70%, #6bcb77 2px, transparent 2px),
+    radial-gradient(circle at 30% 80%, #4d96ff 2px, transparent 2px);
+  animation: fireworkBurst 1s ease-out forwards;
+}
+
+/* WICKET Animation */
+.wicket-animation {
+  background: radial-gradient(circle, rgba(255, 71, 87, 0.4) 0%, transparent 70%);
+  animation: fadeInOut 1.5s ease-out forwards;
+}
+
+.wicket-animation .event-text {
+  color: #ff4757;
+  animation: slideUp 0.3s ease-out, shake 0.5s ease-in-out 0.3s;
+}
+
+.wicket-animation .event-icon {
+  animation: wicketSpin 0.8s ease-out;
+}
+
+/* WIN Animation */
+.win-animation {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.5) 0%, rgba(255, 165, 0, 0.3) 40%, transparent 70%);
+  animation: winFadeInOut 3s ease-out forwards;
+}
+
+.win-animation .event-text {
+  color: #ffd700;
+  font-size: 3rem;
+  animation: slideUp 0.5s ease-out, winPulse 0.8s ease-in-out 0.5s infinite;
+  text-shadow: 0 0 40px #ffd700, 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.win-animation .event-icon {
+  font-size: 6rem;
+  animation: trophyBounce 1s ease-out;
+}
+
+.win-animation .confetti {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 10% 20%, #ff6b6b 3px, transparent 3px),
+    radial-gradient(circle at 90% 15%, #ffd93d 3px, transparent 3px),
+    radial-gradient(circle at 50% 10%, #6bcb77 3px, transparent 3px),
+    radial-gradient(circle at 20% 80%, #4d96ff 3px, transparent 3px),
+    radial-gradient(circle at 70% 85%, #e040fb 3px, transparent 3px),
+    radial-gradient(circle at 85% 60%, #ff9f43 3px, transparent 3px),
+    radial-gradient(circle at 15% 50%, #00d2d3 3px, transparent 3px);
+  animation: confettiFall 2s ease-out forwards;
+}
+
+/* Keyframe Animations */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes winFadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slideUp {
+  0% { 
+    opacity: 0;
+    transform: translateY(50px) scale(0.5);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes iconBounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.3); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    text-shadow: 0 0 30px #e040fb, 0 0 60px #9c27b0;
+    transform: scale(1);
+  }
+  50% { 
+    text-shadow: 0 0 50px #e040fb, 0 0 100px #9c27b0, 0 0 150px #e040fb;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes wicketSpin {
+  0% { transform: scale(0) rotate(-180deg); }
+  60% { transform: scale(1.2) rotate(20deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes trophyBounce {
+  0% { transform: scale(0) rotate(-30deg); }
+  40% { transform: scale(1.4) rotate(10deg); }
+  60% { transform: scale(0.9) rotate(-5deg); }
+  80% { transform: scale(1.1) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes winPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% { 
+    transform: scale(1.08);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes fireworkBurst {
+  0% { 
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  30% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes confettiFall {
+  0% { 
+    transform: translateY(-100%) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(100%) scale(1.5);
+    opacity: 0;
+  }
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .app {
-    padding: 0.5rem;
+    padding: 0.35rem;
+    max-width: 100%;
   }
 
   .setup-container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .setup-container h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
   }
 
   .teams-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .team-box {
-    padding: 1rem;
+    padding: 0.85rem;
   }
 
   .team-name-input {
@@ -866,33 +1208,41 @@ body {
   
   .run-buttons {
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
+    gap: 0.35rem;
   }
 
   .run-btn {
-    padding: 0.8rem;
-    font-size: 1.2rem;
+    padding: 0.7rem;
+    font-size: 1.1rem;
+    border-radius: 10px;
   }
 
   .extra-buttons {
-    gap: 0.5rem;
+    gap: 0.35rem;
   }
 
   .extra-buttons button {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
   }
   
   .main-score {
-    font-size: 3rem;
+    font-size: 2.75rem;
+  }
+
+  .score-header {
+    padding: 0.85rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
   }
 
   .score-header h2 {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .overs {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   /* Stats Table Mobile */
@@ -951,92 +1301,149 @@ body {
 
   /* Current Players Mobile */
   .current-players {
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
   }
 
   .player-row .name {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .player-row .label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .batsmen {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   /* This Over Mobile */
   .this-over {
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
   }
 
   .ball {
-    width: 28px;
-    height: 28px;
-    font-size: 0.75rem;
+    width: 26px;
+    height: 26px;
+    font-size: 0.7rem;
   }
 
   /* Tabs Mobile */
   .tabs {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    padding: 0.2rem;
+    border-radius: 10px;
+  }
   }
 
   .tab {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
   }
 
   /* Innings Complete Mobile */
   .innings-complete {
-    padding: 1.5rem 1rem;
+    padding: 1rem 0.75rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
   }
 
   .innings-complete h2 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+  }
+
+  .innings-complete p {
+    font-size: 0.9rem;
+  }
+
+  .innings-complete .winner {
+    font-size: 1.1rem;
+  }
+
+  .start-innings-btn {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.95rem;
+    margin-top: 0.85rem;
   }
 
   .man-of-match {
-    padding: 0.75rem;
+    padding: 0.65rem;
+    margin: 0.5rem 0;
+  }
+
+  .man-of-match h3 {
+    font-size: 0.8rem;
   }
 
   .mom-name {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+  }
+
+  .mom-stats {
+    font-size: 0.8rem;
   }
 
   /* Match Scores Header Mobile */
   .match-scores-header {
-    gap: 0.5rem;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
   }
 
   .team-score-box {
-    padding: 0.75rem;
+    padding: 0.6rem;
+    border-radius: 10px;
   }
 
   .team-score-box .team-name {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .team-score-box .team-score {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   /* Innings Stats Mobile */
   .innings-stats {
-    padding: 0.75rem;
+    padding: 0.6rem;
+    border-radius: 10px;
   }
 
   .innings-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  /* Stats View Mobile */
+  .stats-view {
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .stats-section {
+    margin-bottom: 0.85rem;
+  }
+
+  .stats-section h3 {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
   }
 
   /* Undo Button Mobile */
   .undo-btn {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
   }
 
   /* Top Bar Mobile */
   .top-bar {
-    padding: 0.5rem;
+    padding: 0.35rem;
+    margin-bottom: 0.35rem;
   }
 
   .reset-btn {
@@ -1133,4 +1540,25 @@ body {
   font-size: 0.9rem;
   margin: 0.5rem 0;
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================
+   MOBILE ANIMATION STYLES
+   ============================================ */
+@media (max-width: 600px) {
+  .event-icon {
+    font-size: 3.5rem;
+  }
+  
+  .event-text {
+    font-size: 1.8rem;
+  }
+  
+  .win-animation .event-text {
+    font-size: 2rem;
+  }
+  
+  .win-animation .event-icon {
+    font-size: 4rem;
+  }
 }

@@ -240,6 +240,7 @@ function LiveScoring() {
   const [showBowlerModal, setShowBowlerModal] = useState(false);
   const [activeTab, setActiveTab] = useState('scoring'); // 'scoring' | 'stats'
   const [selectedTeamStats, setSelectedTeamStats] = useState('first'); // 'first' | 'second'
+  const [animation, setAnimation] = useState(null); // 'four' | 'six' | 'wicket' | 'win'
 
   const battingTeam = state.battingTeam === 'team1' ? state.team1 : state.team2;
   const bowlingTeam = state.battingTeam === 'team1' ? state.team2 : state.team1;
@@ -449,6 +450,15 @@ function LiveScoring() {
   };
 
   const recordBall = (runs, extras = {}) => {
+    // Trigger animation for 4s and 6s
+    if (runs === 4 && !extras.isWicket) {
+      setAnimation('four');
+      setTimeout(() => setAnimation(null), 1200);
+    } else if (runs === 6 && !extras.isWicket) {
+      setAnimation('six');
+      setTimeout(() => setAnimation(null), 1500);
+    }
+    
     dispatch({
       type: 'RECORD_BALL',
       payload: { runs, ...extras }
@@ -456,6 +466,9 @@ function LiveScoring() {
   };
 
   const handleWicket = (newBatsman) => {
+    setAnimation('wicket');
+    setTimeout(() => setAnimation(null), 1500);
+    
     dispatch({
       type: 'RECORD_BALL',
       payload: { runs: 0, isWicket: true, newBatsman }
@@ -479,6 +492,14 @@ function LiveScoring() {
     }
   }, [state.showOverComplete, bowlingTeam.players.length]);
 
+  // Trigger win animation when match completes
+  useEffect(() => {
+    if (state.innings === 2 && isInningsComplete && !animation) {
+      setAnimation('win');
+      setTimeout(() => setAnimation(null), 3000);
+    }
+  }, [state.innings, isInningsComplete]);
+
   const getBallDisplay = (ball) => {
     if (ball.isWicket) return 'W';
     if (ball.isWide) return `${ball.runs}wd`;
@@ -488,6 +509,42 @@ function LiveScoring() {
 
   return (
     <div className="scoring-container">
+      {/* Event Animations */}
+      {animation === 'four' && (
+        <div className="event-overlay four-animation">
+          <div className="event-content">
+            <span className="event-icon">4️⃣</span>
+            <span className="event-text">FOUR!</span>
+          </div>
+        </div>
+      )}
+      {animation === 'six' && (
+        <div className="event-overlay six-animation">
+          <div className="event-content">
+            <span className="event-icon">6️⃣</span>
+            <span className="event-text">MAXIMUM!</span>
+            <div className="fireworks"></div>
+          </div>
+        </div>
+      )}
+      {animation === 'wicket' && (
+        <div className="event-overlay wicket-animation">
+          <div className="event-content">
+            <span className="event-icon">🎯</span>
+            <span className="event-text">WICKET!</span>
+          </div>
+        </div>
+      )}
+      {animation === 'win' && (
+        <div className="event-overlay win-animation">
+          <div className="event-content">
+            <span className="event-icon">🏆</span>
+            <span className="event-text">MATCH WON!</span>
+            <div className="confetti"></div>
+          </div>
+        </div>
+      )}
+
       {/* Over Complete Popup - only show if multiple bowlers */}
       {state.showOverComplete && bowlingTeam.players.length > 1 && (
         <div className="modal-overlay">
