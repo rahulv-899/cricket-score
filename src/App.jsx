@@ -2,14 +2,129 @@ import { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import './App.css';
 
+// Default player names list
+const DEFAULT_PLAYERS = [
+  'Nitish', 'Loki', 'Rahul', 'Dasa', 'B.aravind', 'R.V', 'Suresh', 'Vishal',
+  'Mohan', 'Sanjay', 'Maran', 'Parthee', 'Rajesh', 'VickyG', 'Vicky',
+  'Prasanth', 'Ram', 'Sakthi', 'Jacky', 'Kamesh'
+];
+
+// Player Names Modal Component
+function PlayerNamesModal({ isOpen, onClose, onAddPlayers }) {
+  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [customPlayers, setCustomPlayers] = useState([]);
+  const [newPlayerName, setNewPlayerName] = useState('');
+  const [targetTeam, setTargetTeam] = useState(null);
+
+  const allPlayers = [...DEFAULT_PLAYERS, ...customPlayers];
+
+  const togglePlayer = (name) => {
+    setSelectedPlayers(prev => 
+      prev.includes(name) 
+        ? prev.filter(p => p !== name)
+        : [...prev, name]
+    );
+  };
+
+  const handleAddCustomPlayer = () => {
+    if (newPlayerName.trim() && !allPlayers.includes(newPlayerName.trim())) {
+      setCustomPlayers(prev => [...prev, newPlayerName.trim()]);
+      setNewPlayerName('');
+    }
+  };
+
+  const handleAddToTeam = (team) => {
+    if (selectedPlayers.length > 0) {
+      onAddPlayers(selectedPlayers, team);
+      setSelectedPlayers([]);
+      setTargetTeam(null);
+    }
+  };
+
+  const handleClose = () => {
+    setSelectedPlayers([]);
+    setTargetTeam(null);
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={handleClose}>
+      <div className="player-names-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>👥 Player Names</h2>
+          <button className="close-btn" onClick={handleClose}>×</button>
+        </div>
+        
+        <div className="player-names-list">
+          {allPlayers.map((name, idx) => (
+            <div 
+              key={name}
+              className={`player-name-item ${selectedPlayers.includes(name) ? 'selected' : ''}`}
+              onClick={() => togglePlayer(name)}
+            >
+              <span className="player-number">{idx + 1}.</span>
+              <span className="player-name">{name}</span>
+              {selectedPlayers.includes(name) && <span className="check-mark">✓</span>}
+            </div>
+          ))}
+        </div>
+
+        <div className="add-new-player">
+          <input
+            type="text"
+            placeholder="Add new player..."
+            value={newPlayerName}
+            onChange={(e) => setNewPlayerName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddCustomPlayer()}
+          />
+          <button onClick={handleAddCustomPlayer}>+</button>
+        </div>
+
+        {selectedPlayers.length > 0 && (
+          <div className="team-selection">
+            <p className="selected-count">{selectedPlayers.length} player(s) selected</p>
+            <div className="team-buttons">
+              <button 
+                className="team-btn team1-btn"
+                onClick={() => handleAddToTeam(1)}
+              >
+                Add to Team 1
+              </button>
+              <button 
+                className="team-btn team2-btn"
+                onClick={() => handleAddToTeam(2)}
+              >
+                Add to Team 2
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // Team Setup Component
 function TeamSetup() {
   const { state, dispatch } = useApp();
+  const [showPlayerNames, setShowPlayerNames] = useState(false);
 
   const handleAddPlayer = (team, name) => {
     if (name.trim()) {
       dispatch({ type: team === 1 ? 'ADD_PLAYER_TEAM1' : 'ADD_PLAYER_TEAM2', payload: name.trim() });
     }
+  };
+
+  const handleAddPlayersFromModal = (players, team) => {
+    players.forEach(name => {
+      // Check if player already exists in the team
+      const teamPlayers = team === 1 ? state.team1.players : state.team2.players;
+      if (!teamPlayers.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        handleAddPlayer(team, name);
+      }
+    });
   };
 
   const handleStartMatch = (battingTeam) => {
@@ -142,6 +257,23 @@ function TeamSetup() {
                 : ''}
         </p>
       )}
+
+      {/* Footer Button */}
+      <div className="footer-btn-container">
+        <button 
+          className="player-names-btn"
+          onClick={() => setShowPlayerNames(true)}
+        >
+          👥 Player Names
+        </button>
+      </div>
+
+      {/* Player Names Modal */}
+      <PlayerNamesModal
+        isOpen={showPlayerNames}
+        onClose={() => setShowPlayerNames(false)}
+        onAddPlayers={handleAddPlayersFromModal}
+      />
     </div>
   );
 }
