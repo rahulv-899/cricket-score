@@ -136,18 +136,31 @@ body {
   margin-right: 0.5rem;
 }
 
-.overs-select select {
+.overs-select input {
   padding: 0.5rem 1rem;
   font-size: 1.1rem;
   border-radius: 8px;
-  border: none;
-  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
+  width: 80px;
+  text-align: center;
 }
 
-.overs-select select option {
-  background: #1a1a2e;
-  color: white;
+.overs-select input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.overs-select input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.overs-error {
+  display: block;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 .toss-section {

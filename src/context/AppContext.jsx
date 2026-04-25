@@ -7,7 +7,7 @@ const initialState = {
   step: 'setup', // 'setup' | 'selectPlayers' | 'scoring'
   team1: { name: '', players: [] },
   team2: { name: '', players: [] },
-  overs: 5,
+  overs: 0,
   battingTeam: null, // 'team1' | 'team2'
   // Innings tracking
   innings: 1,

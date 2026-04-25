@@ -14,13 +14,15 @@ function TeamSetup() {
 
   const handleStartMatch = (battingTeam) => {
     if (state.team1.name && state.team2.name && 
-        state.team1.players.length >= 1 && state.team2.players.length >= 1) {
+        state.team1.players.length >= 1 && state.team2.players.length >= 1 &&
+        state.overs > 0) {
       dispatch({ type: 'START_MATCH', payload: { battingTeam } });
     }
   };
 
   const canStart = state.team1.name && state.team2.name && 
-                   state.team1.players.length >= 1 && state.team2.players.length >= 1;
+                   state.team1.players.length >= 1 && state.team2.players.length >= 1 &&
+                   state.overs > 0;
 
   return (
     <div className="setup-container">
@@ -106,13 +108,17 @@ function TeamSetup() {
 
       <div className="overs-select">
         <label>Overs: </label>
-        <select value={state.overs} onChange={(e) => dispatch({ type: 'SET_OVERS', payload: parseInt(e.target.value) })}>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-          <option value={5}>5</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-        </select>
+        <input 
+          type="number" 
+          min="1" 
+          max="50"
+          placeholder="Enter overs"
+          value={state.overs || ''} 
+          onChange={(e) => dispatch({ type: 'SET_OVERS', payload: parseInt(e.target.value) || 0 })}
+        />
+        {!state.overs && state.team1.name && state.team2.name && state.team1.players.length >= 1 && state.team2.players.length >= 1 && (
+          <span className="overs-error">⚠️ Please enter overs</span>
+        )}
       </div>
 
       {canStart && (
@@ -126,7 +132,15 @@ function TeamSetup() {
       )}
 
       {!canStart && (
-        <p className="hint">Add team names + at least 1 player in each team</p>
+        <p className="hint">
+          {!state.team1.name || !state.team2.name 
+            ? 'Add team names' 
+            : state.team1.players.length < 1 || state.team2.players.length < 1 
+              ? 'Add at least 1 player in each team'
+              : !state.overs || state.overs <= 0
+                ? 'Enter number of overs to play'
+                : ''}
+        </p>
       )}
     </div>
   );
