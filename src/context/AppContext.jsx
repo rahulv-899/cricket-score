@@ -13,6 +13,8 @@ const initialState = {
   innings: 1,
   firstInningsScore: null,
   firstInningsWickets: null,
+  firstInningsBallByBall: [],
+  firstInningsBattingTeam: null,
   matchComplete: false,
   // Scoring state
   score: 0,
@@ -235,6 +237,8 @@ const appReducer = (state, action) => {
         innings: 2,
         firstInningsScore: state.score,
         firstInningsWickets: state.wickets,
+        firstInningsBallByBall: state.ballByBall,
+        firstInningsBattingTeam: state.battingTeam,
         battingTeam: newBattingTeam,
         battingPlayers: newBattingTeamData.players,
         bowlingPlayers: newBowlingTeamData.players,

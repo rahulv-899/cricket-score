@@ -685,6 +685,77 @@ body {
   font-weight: 600;
 }
 
+/* Man of the Match */
+.man-of-match {
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #1a1a2e;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.man-of-match h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.mom-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.25rem 0;
+}
+
+.mom-stats {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Match Summary */
+.match-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.team-summary {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.team-summary h4 {
+  margin: 0 0 0.75rem 0;
+  color: #4caf50;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.mini-stats {
+  margin-bottom: 0.75rem;
+}
+
+.mini-stats strong {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.25rem;
+}
+
+.mini-stat-row {
+  font-size: 0.85rem;
+  padding: 0.15rem 0;
+}
+
+@media (max-width: 500px) {
+  .match-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
@@ -758,4 +829,75 @@ body {
   .main-score {
     font-size: 3rem;
   }
+}
+
+/* View Stats Hint */
+.view-stats-hint {
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Match Scores Header (Full Match Stats) */
+.match-scores-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.team-score-box {
+  background: linear-gradient(135deg, #2d2d44, #1a1a2e);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.team-score-box:hover {
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+.team-score-box.selected {
+  border-color: #4caf50;
+  background: linear-gradient(135deg, #2d3d34, #1a2a1e);
+}
+
+.team-score-box .team-name {
+  display: block;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.25rem;
+}
+
+.team-score-box .team-score {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* Innings Stats Section */
+.innings-stats {
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.innings-title {
+  font-size: 1rem;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffd700;
+}
+
+.innings-stats h4 {
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
 }

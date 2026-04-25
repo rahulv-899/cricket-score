@@ -225,6 +225,7 @@ function LiveScoring() {
   const [showWicketModal, setShowWicketModal] = useState(false);
   const [showBowlerModal, setShowBowlerModal] = useState(false);
   const [activeTab, setActiveTab] = useState('scoring'); // 'scoring' | 'stats'
+  const [selectedTeamStats, setSelectedTeamStats] = useState('first'); // 'first' | 'second'
 
   const battingTeam = state.battingTeam === 'team1' ? state.team1 : state.team2;
   const bowlingTeam = state.battingTeam === 'team1' ? state.team2 : state.team1;
@@ -334,6 +335,103 @@ function LiveScoring() {
       economy: s.balls > 0 ? ((s.runs / (s.balls / 6))).toFixed(2) : '0.00',
       isBowling: s.id === state.currentBowler?.id
     }));
+  };
+
+  // Get batting stats from any ball-by-ball array
+  const getStatsFromBallByBall = (ballByBall) => {
+    const batStats = {};
+    const bowlStats = {};
+    
+    ballByBall.forEach(ball => {
+      // Batting stats
+      const batsmanId = ball.striker?.id;
+      if (batsmanId) {
+        if (!batStats[batsmanId]) {
+          batStats[batsmanId] = {
+            id: batsmanId,
+            name: ball.striker.name,
+            runs: 0,
+            balls: 0,
+            fours: 0,
+            sixes: 0,
+            isOut: false
+          };
+        }
+        if (!ball.isWide) {
+          batStats[batsmanId].runs += ball.runs;
+          batStats[batsmanId].balls += 1;
+          if (ball.runs === 4) batStats[batsmanId].fours += 1;
+          if (ball.runs === 6) batStats[batsmanId].sixes += 1;
+        }
+        if (ball.isWicket) batStats[batsmanId].isOut = true;
+      }
+      
+      // Bowling stats
+      const bowlerId = ball.bowler?.id;
+      if (bowlerId) {
+        if (!bowlStats[bowlerId]) {
+          bowlStats[bowlerId] = {
+            id: bowlerId,
+            name: ball.bowler.name,
+            balls: 0,
+            runs: 0,
+            wickets: 0
+          };
+        }
+        if (!ball.isWide && !ball.isNoBall) {
+          bowlStats[bowlerId].balls += 1;
+        }
+        bowlStats[bowlerId].runs += ball.totalRuns || ball.runs;
+        if (ball.isWicket) bowlStats[bowlerId].wickets += 1;
+      }
+    });
+    
+    return {
+      batting: Object.values(batStats).map(s => ({
+        ...s,
+        strikeRate: s.balls > 0 ? ((s.runs / s.balls) * 100).toFixed(1) : '0.0'
+      })),
+      bowling: Object.values(bowlStats).map(s => ({
+        ...s,
+        overs: `${Math.floor(s.balls / 6)}.${s.balls % 6}`,
+        economy: s.balls > 0 ? ((s.runs / (s.balls / 6))).toFixed(2) : '0.00'
+      }))
+    };
+  };
+
+  // Calculate Man of the Match
+  const getManOfTheMatch = () => {
+    if (state.innings !== 2) return null;
+    
+    const firstInningsStats = getStatsFromBallByBall(state.firstInningsBallByBall || []);
+    const secondInningsStats = getStatsFromBallByBall(state.ballByBall);
+    
+    const allBatsmen = [...firstInningsStats.batting, ...secondInningsStats.batting];
+    const allBowlers = [...firstInningsStats.bowling, ...secondInningsStats.bowling];
+    
+    // Score: runs + (wickets * 25)
+    let bestPlayer = null;
+    let bestScore = 0;
+    
+    // Check batsmen
+    allBatsmen.forEach(b => {
+      const score = b.runs;
+      if (score > bestScore) {
+        bestScore = score;
+        bestPlayer = { name: b.name, runs: b.runs, wickets: 0, type: 'batsman' };
+      }
+    });
+    
+    // Check bowlers (3+ wickets is significant)
+    allBowlers.forEach(b => {
+      const score = b.wickets * 30;
+      if (score > bestScore) {
+        bestScore = score;
+        bestPlayer = { name: b.name, runs: 0, wickets: b.wickets, type: 'bowler' };
+      }
+    });
+    
+    return bestPlayer;
   };
 
   const recordBall = (runs, extras = {}) => {
@@ -455,65 +553,178 @@ function LiveScoring() {
 
       {activeTab === 'stats' ? (
         <div className="stats-view">
-          {/* Batting Stats */}
-          <div className="stats-section">
-            <h3>🏏 Batting</h3>
-            <div className="stats-table">
-              <div className="stats-header">
-                <span className="col-name">Batsman</span>
-                <span className="col-stat">R</span>
-                <span className="col-stat">B</span>
-                <span className="col-stat">4s</span>
-                <span className="col-stat">6s</span>
-                <span className="col-stat">SR</span>
-              </div>
-              {getBatsmanStats().map(b => (
-                <div key={b.id} className={`stats-row ${b.isBatting ? 'active' : ''} ${b.isOut ? 'out' : ''}`}>
-                  <span className="col-name">
-                    {b.name} {b.isBatting ? (b.id === state.striker?.id ? '*' : '') : ''}
-                    {b.isOut && <span className="out-badge">OUT</span>}
-                  </span>
-                  <span className="col-stat">{b.runs}</span>
-                  <span className="col-stat">{b.balls}</span>
-                  <span className="col-stat">{b.fours}</span>
-                  <span className="col-stat">{b.sixes}</span>
-                  <span className="col-stat">{b.strikeRate}</span>
+          {/* Show both teams after match complete */}
+          {state.innings === 2 && isInningsComplete ? (
+            <>
+              {/* Team Scores Header - Clickable */}
+              <div className="match-scores-header">
+                <div 
+                  className={`team-score-box ${selectedTeamStats === 'first' ? 'selected' : ''}`}
+                  onClick={() => setSelectedTeamStats('first')}
+                >
+                  <span className="team-name">{bowlingTeam.name}</span>
+                  <span className="team-score">{state.firstInningsScore}/{state.firstInningsWickets}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bowling Stats */}
-          <div className="stats-section">
-            <h3>⚾ Bowling</h3>
-            <div className="stats-table bowling-table">
-              <div className="stats-header bowling-header">
-                <span className="col-name">Bowler</span>
-                <span className="col-stat">O</span>
-                <span className="col-stat">R</span>
-                <span className="col-stat">W</span>
-                <span className="col-stat">Econ</span>
-              </div>
-              {getBowlerStats().map(b => (
-                <div key={b.id} className={`stats-row bowling-row ${b.isBowling ? 'active' : ''}`}>
-                  <span className="col-name">
-                    {b.name} {b.isBowling ? '*' : ''}
-                  </span>
-                  <span className="col-stat">{b.overs}</span>
-                  <span className="col-stat">{b.runs}</span>
-                  <span className="col-stat">{b.wickets}</span>
-                  <span className="col-stat">{b.economy}</span>
+                <div 
+                  className={`team-score-box ${selectedTeamStats === 'second' ? 'selected' : ''}`}
+                  onClick={() => setSelectedTeamStats('second')}
+                >
+                  <span className="team-name">{battingTeam.name}</span>
+                  <span className="team-score">{state.score}/{state.wickets}</span>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Extras Summary */}
-          <div className="extras-summary">
-            <span>Extras: </span>
-            <span>WD: {state.ballByBall.filter(b => b.isWide).length}</span>
-            <span>NB: {state.ballByBall.filter(b => b.isNoBall).length}</span>
-          </div>
+              {/* Show selected team's stats */}
+              {selectedTeamStats === 'first' ? (
+                <div className="innings-stats">
+                  <h3 className="innings-title">{bowlingTeam.name} - 1st Innings</h3>
+                  <div className="stats-section">
+                    <h4>🏏 Batting</h4>
+                    <div className="stats-table">
+                      <div className="stats-header">
+                        <span className="col-name">Batsman</span>
+                        <span className="col-stat">R</span>
+                        <span className="col-stat">B</span>
+                        <span className="col-stat">SR</span>
+                      </div>
+                      {getStatsFromBallByBall(state.firstInningsBallByBall || []).batting.map(b => (
+                        <div key={b.id} className={`stats-row ${b.isOut ? 'out' : ''}`}>
+                          <span className="col-name">{b.name} {!b.isOut && '*'}</span>
+                          <span className="col-stat">{b.runs}</span>
+                          <span className="col-stat">{b.balls}</span>
+                          <span className="col-stat">{b.strikeRate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="stats-section">
+                    <h4>⚾ Bowling</h4>
+                    <div className="stats-table bowling-table">
+                      <div className="stats-header bowling-header">
+                        <span className="col-name">Bowler</span>
+                        <span className="col-stat">O</span>
+                        <span className="col-stat">R</span>
+                        <span className="col-stat">W</span>
+                      </div>
+                      {getStatsFromBallByBall(state.firstInningsBallByBall || []).bowling.map(b => (
+                        <div key={b.id} className="stats-row bowling-row">
+                          <span className="col-name">{b.name}</span>
+                          <span className="col-stat">{b.overs}</span>
+                          <span className="col-stat">{b.runs}</span>
+                          <span className="col-stat">{b.wickets}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="innings-stats">
+                  <h3 className="innings-title">{battingTeam.name} - 2nd Innings</h3>
+                  <div className="stats-section">
+                    <h4>🏏 Batting</h4>
+                    <div className="stats-table">
+                      <div className="stats-header">
+                        <span className="col-name">Batsman</span>
+                        <span className="col-stat">R</span>
+                        <span className="col-stat">B</span>
+                        <span className="col-stat">SR</span>
+                      </div>
+                      {getStatsFromBallByBall(state.ballByBall).batting.map(b => (
+                        <div key={b.id} className={`stats-row ${b.isOut ? 'out' : ''}`}>
+                          <span className="col-name">{b.name} {!b.isOut && '*'}</span>
+                          <span className="col-stat">{b.runs}</span>
+                          <span className="col-stat">{b.balls}</span>
+                          <span className="col-stat">{b.strikeRate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="stats-section">
+                    <h4>⚾ Bowling</h4>
+                    <div className="stats-table bowling-table">
+                      <div className="stats-header bowling-header">
+                        <span className="col-name">Bowler</span>
+                        <span className="col-stat">O</span>
+                        <span className="col-stat">R</span>
+                        <span className="col-stat">W</span>
+                      </div>
+                      {getStatsFromBallByBall(state.ballByBall).bowling.map(b => (
+                        <div key={b.id} className="stats-row bowling-row">
+                          <span className="col-name">{b.name}</span>
+                          <span className="col-stat">{b.overs}</span>
+                          <span className="col-stat">{b.runs}</span>
+                          <span className="col-stat">{b.wickets}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Current Innings Stats (during match) */}
+              {/* Batting Stats */}
+              <div className="stats-section">
+                <h3>🏏 Batting</h3>
+                <div className="stats-table">
+                  <div className="stats-header">
+                    <span className="col-name">Batsman</span>
+                    <span className="col-stat">R</span>
+                    <span className="col-stat">B</span>
+                    <span className="col-stat">4s</span>
+                    <span className="col-stat">6s</span>
+                    <span className="col-stat">SR</span>
+                  </div>
+                  {getBatsmanStats().map(b => (
+                    <div key={b.id} className={`stats-row ${b.isBatting ? 'active' : ''} ${b.isOut ? 'out' : ''}`}>
+                      <span className="col-name">
+                        {b.name} {b.isBatting ? (b.id === state.striker?.id ? '*' : '') : ''}
+                        {b.isOut && <span className="out-badge">OUT</span>}
+                      </span>
+                      <span className="col-stat">{b.runs}</span>
+                      <span className="col-stat">{b.balls}</span>
+                      <span className="col-stat">{b.fours}</span>
+                      <span className="col-stat">{b.sixes}</span>
+                      <span className="col-stat">{b.strikeRate}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bowling Stats */}
+              <div className="stats-section">
+                <h3>⚾ Bowling</h3>
+                <div className="stats-table bowling-table">
+                  <div className="stats-header bowling-header">
+                    <span className="col-name">Bowler</span>
+                    <span className="col-stat">O</span>
+                    <span className="col-stat">R</span>
+                    <span className="col-stat">W</span>
+                    <span className="col-stat">Econ</span>
+                  </div>
+                  {getBowlerStats().map(b => (
+                    <div key={b.id} className={`stats-row bowling-row ${b.isBowling ? 'active' : ''}`}>
+                      <span className="col-name">
+                        {b.name} {b.isBowling ? '*' : ''}
+                      </span>
+                      <span className="col-stat">{b.overs}</span>
+                      <span className="col-stat">{b.runs}</span>
+                      <span className="col-stat">{b.wickets}</span>
+                      <span className="col-stat">{b.economy}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Extras Summary */}
+              <div className="extras-summary">
+                <span>Extras: </span>
+                <span>WD: {state.ballByBall.filter(b => b.isWide).length}</span>
+                <span>NB: {state.ballByBall.filter(b => b.isNoBall).length}</span>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <>
@@ -601,8 +812,21 @@ function LiveScoring() {
                   ) : (
                     <p className="winner">Match Tied!</p>
                   )}
-                  <p>{bowlingTeam.name}: {state.firstInningsScore}/{state.firstInningsWickets}</p>
-                  <p>{battingTeam.name}: {state.score}/{state.wickets}</p>
+                  
+                  {/* Man of the Match */}
+                  {getManOfTheMatch() && (
+                    <div className="man-of-match">
+                      <h3>🌟 Man of the Match</h3>
+                      <p className="mom-name">{getManOfTheMatch().name}</p>
+                      <p className="mom-stats">
+                        {getManOfTheMatch().type === 'batsman' 
+                          ? `${getManOfTheMatch().runs} runs` 
+                          : `${getManOfTheMatch().wickets} wickets`}
+                      </p>
+                    </div>
+                  )}
+                  
+                  <p className="view-stats-hint">View "Live Stats" tab for detailed scorecard</p>
                 </>
               )}
             </div>
