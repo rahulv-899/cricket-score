@@ -14,7 +14,7 @@ function TeamSetup() {
 
   const handleStartMatch = (battingTeam) => {
     if (state.team1.name && state.team2.name && 
-        state.team1.players.length >= 2 && state.team2.players.length >= 1) {
+        state.team1.players.length >= 1 && state.team2.players.length >= 1) {
       dispatch({ type: 'START_MATCH', payload: { battingTeam } });
     }
   };
@@ -370,14 +370,25 @@ function LiveScoring() {
         <div className="modal-overlay">
           <div className="modal">
             <h2>🎉 Over Complete!</h2>
-            <p>Select next bowler</p>
-            <div className="bowler-list">
-              {bowlingTeam.players.filter(p => p.id !== state.currentBowler?.id).map(p => (
-                <button key={p.id} onClick={() => handleBowlerChange(p)}>
-                  {p.name}
+            {bowlingTeam.players.length === 1 ? (
+              <>
+                <p>{state.currentBowler?.name} continues bowling</p>
+                <button onClick={() => handleBowlerChange(state.currentBowler)}>
+                  Continue
                 </button>
-              ))}
-            </div>
+              </>
+            ) : (
+              <>
+                <p>Select next bowler</p>
+                <div className="bowler-list">
+                  {bowlingTeam.players.filter(p => p.id !== state.currentBowler?.id).map(p => (
+                    <button key={p.id} onClick={() => handleBowlerChange(p)}>
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
