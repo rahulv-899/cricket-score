@@ -387,6 +387,9 @@ function LiveScoring() {
   const { state, dispatch } = useApp();
   const [showWicketModal, setShowWicketModal] = useState(false);
   const [showBowlerModal, setShowBowlerModal] = useState(false);
+  const [showPlaySingleModal, setShowPlaySingleModal] = useState(false);
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [batsmanToSwap, setBatsmanToSwap] = useState(null); // striker or non-striker to be replaced
   const [activeTab, setActiveTab] = useState('scoring'); // 'scoring' | 'stats'
   const [selectedTeamStats, setSelectedTeamStats] = useState('first'); // 'first' | 'second'
   const [animation, setAnimation] = useState(null); // 'four' | 'six' | 'wicket' | 'win'
@@ -403,6 +406,13 @@ function LiveScoring() {
   const isInningsComplete = state.balls >= totalBalls || state.wickets >= state.battingPlayers.length || targetBeaten;
 
   const availableBatsmen = state.battingPlayers.filter(
+    p => p.id !== state.striker?.id && 
+         p.id !== state.nonStriker?.id && 
+         !state.outBatsmen.includes(p.id)
+  );
+
+  // Available batsmen for swap (includes retired batsmen who can come back)
+  const swappableBatsmen = state.battingPlayers.filter(
     p => p.id !== state.striker?.id && 
          p.id !== state.nonStriker?.id && 
          !state.outBatsmen.includes(p.id)
@@ -730,8 +740,145 @@ function LiveScoring() {
         </div>
       )}
 
-      {/* Top Bar with Reset */}
+      {/* Play Single Modal */}
+      {showPlaySingleModal && (
+        <div className="modal-overlay">
+          <div className="modal play-single-modal">
+            <h2>🏏 Play Single</h2>
+            <p>Who goes to pavilion?</p>
+            <div className="play-single-batsmen">
+              <button 
+                className="batsman-choice-btn"
+                onClick={() => {
+                  dispatch({ type: 'SET_PLAY_SINGLE', payload: state.nonStriker });
+                  setShowPlaySingleModal(false);
+                }}
+              >
+                <span className="batsman-role">Striker</span>
+                <span className="batsman-name">{state.striker?.name}</span>
+                <span className="batsman-action">goes to pavilion</span>
+              </button>
+              <button 
+                className="batsman-choice-btn"
+                onClick={() => {
+                  dispatch({ type: 'SET_PLAY_SINGLE', payload: state.striker });
+                  setShowPlaySingleModal(false);
+                }}
+              >
+                <span className="batsman-role">Non-Striker</span>
+                <span className="batsman-name">{state.nonStriker?.name}</span>
+                <span className="batsman-action">goes to pavilion</span>
+              </button>
+            </div>
+            <button 
+              className="cancel-btn"
+              onClick={() => setShowPlaySingleModal(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Swap Batsman Modal - Step 1: Choose which batsman to replace */}
+      {showSwapModal && !batsmanToSwap && (
+        <div className="modal-overlay">
+          <div className="modal swap-modal">
+            <h2>🔄 Swap Batsman</h2>
+            <p>Who needs to be replaced?</p>
+            <div className="swap-batsmen-list">
+              <button 
+                className="batsman-choice-btn"
+                onClick={() => setBatsmanToSwap(state.striker)}
+              >
+                <span className="batsman-role">Striker</span>
+                <span className="batsman-name">{state.striker?.name}</span>
+              </button>
+              {state.nonStriker && (
+                <button 
+                  className="batsman-choice-btn"
+                  onClick={() => setBatsmanToSwap(state.nonStriker)}
+                >
+                  <span className="batsman-role">Non-Striker</span>
+                  <span className="batsman-name">{state.nonStriker?.name}</span>
+                </button>
+              )}
+            </div>
+            <button 
+              className="cancel-btn"
+              onClick={() => setShowSwapModal(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Swap Batsman Modal - Step 2: Choose replacement player */}
+      {showSwapModal && batsmanToSwap && (
+        <div className="modal-overlay">
+          <div className="modal swap-modal">
+            <h2>🔄 Replace {batsmanToSwap.name}</h2>
+            <p>Select new batsman:</p>
+            <div className="swap-batsmen-list">
+              {swappableBatsmen.map(p => (
+                <button 
+                  key={p.id}
+                  className="batsman-choice-btn"
+                  onClick={() => {
+                    dispatch({ 
+                      type: 'SWAP_BATSMAN', 
+                      payload: { leavingBatsman: batsmanToSwap, newBatsman: p }
+                    });
+                    setBatsmanToSwap(null);
+                    setShowSwapModal(false);
+                  }}
+                >
+                  <span className="batsman-name">{p.name}</span>
+                </button>
+              ))}
+            </div>
+            <button 
+              className="cancel-btn"
+              onClick={() => {
+                setBatsmanToSwap(null);
+                setShowSwapModal(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Top Bar with action buttons (left) and Reset (right) */}
       <div className="top-bar">
+        <div className="top-bar-left">
+          {state.nonStriker && !isInningsComplete && (
+            <button 
+              className="play-single-btn-top"
+              onClick={() => setShowPlaySingleModal(true)}
+            >
+              🏏 Play Single
+            </button>
+          )}
+          {state.pavilionBatsman && !isInningsComplete && (
+            <button 
+              className="bring-back-btn-top"
+              onClick={() => dispatch({ type: 'UNDO_PLAY_SINGLE' })}
+            >
+              ↩ Bring Back {state.pavilionBatsman.name}
+            </button>
+          )}
+          {swappableBatsmen.length > 0 && !isInningsComplete && (
+            <button 
+              className="swap-btn-top"
+              onClick={() => setShowSwapModal(true)}
+            >
+              🔄 Swap
+            </button>
+          )}
+        </div>
         <button className="reset-btn" onClick={() => {
           if (window.confirm('Reset entire match?')) {
             dispatch({ type: 'RESET' });

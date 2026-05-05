@@ -29,6 +29,8 @@ const initialState = {
   bowlingPlayers: [], // players who can bowl
   outBatsmen: [], // batsmen who are out
   currentOver: [], // balls in current over for display
+  pavilionBatsman: null, // batsman sent to pavilion via Play Single (can be brought back)
+  retiredBatsmen: [], // batsmen who retired/were swapped out (not out, just left)
 };
 
 const loadState = () => {
@@ -279,6 +281,46 @@ const appReducer = (state, action) => {
         outBatsmen: [],
         showOverComplete: false,
         step: 'selectPlayers',
+        pavilionBatsman: null,
+        retiredBatsmen: [],
+      };
+    }
+    
+    case 'SET_PLAY_SINGLE': {
+      // Voluntary single batsman mode - chosen batsman continues as striker
+      // The other batsman goes to pavilion (NOT out, can be brought back)
+      const stayingBatsman = action.payload;
+      const leavingBatsman = stayingBatsman.id === state.striker?.id 
+        ? state.nonStriker 
+        : state.striker;
+      return {
+        ...state,
+        striker: stayingBatsman,
+        nonStriker: null,
+        pavilionBatsman: leavingBatsman,
+      };
+    }
+    
+    case 'UNDO_PLAY_SINGLE': {
+      // Bring back the batsman who was sent to pavilion
+      if (!state.pavilionBatsman) return state;
+      return {
+        ...state,
+        nonStriker: state.pavilionBatsman,
+        pavilionBatsman: null,
+      };
+    }
+    
+    case 'SWAP_BATSMAN': {
+      // Replace a batsman with another player (retire hurt / substitute)
+      const { leavingBatsman, newBatsman } = action.payload;
+      const isStriker = state.striker?.id === leavingBatsman.id;
+      return {
+        ...state,
+        striker: isStriker ? newBatsman : state.striker,
+        nonStriker: !isStriker ? newBatsman : state.nonStriker,
+        // Store leaving batsman so they can potentially come back
+        retiredBatsmen: [...(state.retiredBatsmen || []), leavingBatsman],
       };
     }
     
