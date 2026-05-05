@@ -121,8 +121,8 @@ const appReducer = (state, action) => {
       // Check if over is complete (6 legal balls)
       const overComplete = isLegal && (state.balls % 6 === 5);
       
-      // Rotate strike on odd runs (1, 3, 5) or at end of over
-      const shouldRotate = (runs % 2 === 1);
+      // Rotate strike on odd runs (1, 3, 5) - but NOT on wide balls
+      const shouldRotate = !isWide && (runs % 2 === 1);
       
       let newStriker = state.striker;
       let newNonStriker = state.nonStriker;
@@ -207,8 +207,28 @@ const appReducer = (state, action) => {
         newOutBatsmen = newOutBatsmen.filter(id => id !== lastBall.striker.id);
       }
       
-      // Restore current over
-      let newCurrentOver = state.currentOver.slice(0, -1);
+      // Restore current over - if currentOver is empty (over just finished), 
+      // we need to reconstruct from ballByBall
+      let newCurrentOver;
+      if (state.currentOver.length === 0) {
+        // Over just finished, reconstruct the previous over's balls (excluding the one we're undoing)
+        // Find all balls from the current over in ballByBall
+        const newBalls = isLegal ? state.balls - 1 : state.balls;
+        const currentOverNumber = Math.floor((newBalls - 1) / 6);
+        // Get balls that belong to this over (based on their legal ball count)
+        let legalBallCount = 0;
+        newCurrentOver = [];
+        for (const ball of newBallByBall) {
+          const ballIsLegal = !ball.isWide && !ball.isNoBall;
+          if (ballIsLegal) legalBallCount++;
+          const ballOverNumber = Math.floor((legalBallCount - 1) / 6);
+          if (ballOverNumber === currentOverNumber) {
+            newCurrentOver.push(ball);
+          }
+        }
+      } else {
+        newCurrentOver = state.currentOver.slice(0, -1);
+      }
       
       return {
         ...state,
