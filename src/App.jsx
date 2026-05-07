@@ -411,12 +411,17 @@ function LiveScoring() {
          !state.outBatsmen.includes(p.id)
   );
 
-  // Available batsmen for swap (includes retired batsmen who can come back)
-  const swappableBatsmen = state.battingPlayers.filter(
-    p => p.id !== state.striker?.id && 
-         p.id !== state.nonStriker?.id && 
-         !state.outBatsmen.includes(p.id)
-  );
+  // Available batsmen for swap (includes retired batsmen and pavilion batsman who can come back)
+  const swappableBatsmen = [
+    ...state.battingPlayers.filter(
+      p => p.id !== state.striker?.id && 
+           p.id !== state.nonStriker?.id && 
+           !state.outBatsmen.includes(p.id) &&
+           p.id !== state.pavilionBatsman?.id  // Don't duplicate pavilion batsman
+    ),
+    // Include pavilion batsman if exists (they can be swapped in)
+    ...(state.pavilionBatsman ? [state.pavilionBatsman] : [])
+  ];
 
   // Calculate batting stats from ball-by-ball
   const getBatsmanStats = () => {
@@ -819,25 +824,31 @@ function LiveScoring() {
         <div className="modal-overlay">
           <div className="modal swap-modal">
             <h2>🔄 Replace {batsmanToSwap.name}</h2>
-            <p>Select new batsman:</p>
-            <div className="swap-batsmen-list">
-              {swappableBatsmen.map(p => (
-                <button 
-                  key={p.id}
-                  className="batsman-choice-btn"
-                  onClick={() => {
-                    dispatch({ 
-                      type: 'SWAP_BATSMAN', 
-                      payload: { leavingBatsman: batsmanToSwap, newBatsman: p }
-                    });
-                    setBatsmanToSwap(null);
-                    setShowSwapModal(false);
-                  }}
-                >
-                  <span className="batsman-name">{p.name}</span>
-                </button>
-              ))}
-            </div>
+            {swappableBatsmen.length > 0 ? (
+              <>
+                <p>Select new batsman:</p>
+                <div className="swap-batsmen-list">
+                  {swappableBatsmen.map(p => (
+                    <button 
+                      key={p.id}
+                      className="batsman-choice-btn"
+                      onClick={() => {
+                        dispatch({ 
+                          type: 'SWAP_BATSMAN', 
+                          payload: { leavingBatsman: batsmanToSwap, newBatsman: p }
+                        });
+                        setBatsmanToSwap(null);
+                        setShowSwapModal(false);
+                      }}
+                    >
+                      <span className="batsman-name">{p.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <p className="no-players-msg">No players available to swap in. All players are either batting or out.</p>
+            )}
             <button 
               className="cancel-btn"
               onClick={() => {
@@ -870,7 +881,7 @@ function LiveScoring() {
               ↩ Bring Back {state.pavilionBatsman.name}
             </button>
           )}
-          {swappableBatsmen.length > 0 && !isInningsComplete && (
+          {!isInningsComplete && (
             <button 
               className="swap-btn-top"
               onClick={() => setShowSwapModal(true)}

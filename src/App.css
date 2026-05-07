@@ -413,6 +413,15 @@ body {
   font-size: 0.95rem;
 }
 
+.no-players-msg {
+  color: #ffa726;
+  font-style: italic;
+  padding: 1rem;
+  background: rgba(255, 167, 38, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
 .swap-batsmen-list {
   display: flex;
   flex-direction: column;

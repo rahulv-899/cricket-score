@@ -335,12 +335,19 @@ const appReducer = (state, action) => {
       // Replace a batsman with another player (retire hurt / substitute)
       const { leavingBatsman, newBatsman } = action.payload;
       const isStriker = state.striker?.id === leavingBatsman.id;
+      
+      // Check if we're bringing back the pavilion batsman via swap
+      const isSwappingInPavilionBatsman = state.pavilionBatsman?.id === newBatsman.id;
+      
       return {
         ...state,
         striker: isStriker ? newBatsman : state.striker,
         nonStriker: !isStriker ? newBatsman : state.nonStriker,
         // Store leaving batsman so they can potentially come back
         retiredBatsmen: [...(state.retiredBatsmen || []), leavingBatsman],
+        // Clear pavilion batsman if we just swapped them in
+        pavilionBatsman: isSwappingInPavilionBatsman ? null : state.pavilionBatsman,
+        pavilionBatsmanWasStriker: isSwappingInPavilionBatsman ? null : state.pavilionBatsmanWasStriker,
       };
     }
     
