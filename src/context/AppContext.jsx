@@ -30,6 +30,7 @@ const initialState = {
   outBatsmen: [], // batsmen who are out
   currentOver: [], // balls in current over for display
   pavilionBatsman: null, // batsman sent to pavilion via Play Single (can be brought back)
+  pavilionBatsmanWasStriker: null, // track if pavilion batsman was striker before
   retiredBatsmen: [], // batsmen who retired/were swapped out (not out, just left)
 };
 
@@ -282,6 +283,7 @@ const appReducer = (state, action) => {
         showOverComplete: false,
         step: 'selectPlayers',
         pavilionBatsman: null,
+        pavilionBatsmanWasStriker: null,
         retiredBatsmen: [],
       };
     }
@@ -293,22 +295,40 @@ const appReducer = (state, action) => {
       const leavingBatsman = stayingBatsman.id === state.striker?.id 
         ? state.nonStriker 
         : state.striker;
+      // Remember if the leaving batsman was the striker
+      const wasStriker = state.striker?.id === leavingBatsman?.id;
       return {
         ...state,
         striker: stayingBatsman,
         nonStriker: null,
         pavilionBatsman: leavingBatsman,
+        pavilionBatsmanWasStriker: wasStriker,
       };
     }
     
     case 'UNDO_PLAY_SINGLE': {
-      // Bring back the batsman who was sent to pavilion
+      // Bring back the batsman who was sent to pavilion to their ORIGINAL position
       if (!state.pavilionBatsman) return state;
-      return {
-        ...state,
-        nonStriker: state.pavilionBatsman,
-        pavilionBatsman: null,
-      };
+      
+      // Restore to original positions
+      if (state.pavilionBatsmanWasStriker) {
+        // Pavilion batsman was striker before, restore them to striker
+        return {
+          ...state,
+          striker: state.pavilionBatsman,
+          nonStriker: state.striker,
+          pavilionBatsman: null,
+          pavilionBatsmanWasStriker: null,
+        };
+      } else {
+        // Pavilion batsman was non-striker before, restore them to non-striker
+        return {
+          ...state,
+          nonStriker: state.pavilionBatsman,
+          pavilionBatsman: null,
+          pavilionBatsmanWasStriker: null,
+        };
+      }
     }
     
     case 'SWAP_BATSMAN': {
